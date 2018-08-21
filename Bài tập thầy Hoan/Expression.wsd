@@ -1,0 +1,99 @@
+@startuml Expression
+interface IItem {
+     bool isConstant()
+     string getSymbol()
+     double valueOf(int nbVars, IVariable *vars)
+}
+class SItemInfo {
+    IItem mEVal;
+    double mVal; 
+}
+IItem <|-- IFunction
+interface IFunction {
+    IState getState()
+    int getNumArgs()
+}
+enum EPrecedence {
+    e_LOGICAL_OR,
+    e_LOGICAL_AND,
+    e_LOGICAL_COMPARE_EQUAL,
+    e_LOGICAL_COMPARE_GREATERTHAN,
+    e_ADD,
+    e_MULT
+}
+IItem <|-- IOperation
+IOperation o-- EPrecedence
+interface IOperation {
+     bool isUnaryOp()
+     ePrecedence getPrecedence()
+}
+IOperation <|-- CAddOp
+class CAddOp {
+    string getSymbol()
+}
+IOperation <|-- CSubOp
+class CSubOp {
+    string getSymbol()
+}
+IOperation <|-- CMultOp
+class CMultOp {
+    string getSymbol()
+}
+IOperation <|-- CDivOp
+class CDivOp {
+    string getSymbol()
+}
+IFunction <|-- CSinFunc
+class CSinFunc {
+    string getSymbol()
+}
+IFunction <|-- CCosFunc
+class CCosFunc {
+    string getSymbol()
+}
+IFunction <|-- CSqrtFunc
+class CSqrtFunc {
+    string getSymbol()
+}
+IFunction <|-- CExpFunc
+class CExpFunc {
+    string getSymbol()
+}
+IItem <|-- IVariable
+interface IVariable {
+     int getNumArgs()
+}
+IVariable <|-- CVarVector
+class CVarVector {
+    -int mNumberOfVal
+    -List<double> mVal
+    -int mPos
+    -string mSymbol
+}
+class CExpression {
+    -List<SItemInfo>::iterator mBeginItr
+    -List<SItemInfo>::iterator mEndItr
+    -List<SItemInfo> mItemStack
+    -int mItemStackSize
+    -double mConstValue
+    +CExpression operator=(CExpression eps)
+    +CExpression(string raw_expression)
+    +CExpression add(CExpression eps)
+    +CExpession sub(CExpression eps)
+    +CExpression mult(CExpression eps)
+    +CExpression div(CExpression eps)
+    +CExpression normalize()
+    +double evaluate()
+    +void defineVars(IVariable var)
+}
+CExpression o-- IVariable
+interface IState {
+     void enter()
+     void onEndOfFormula()
+     void onOp()
+     void onOpenBracket()
+     void onCloseBracket()
+     void onArgSeperator()
+}
+IFunction o-- IState
+@enduml
